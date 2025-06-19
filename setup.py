@@ -9,7 +9,7 @@ with open('README.md') as readme_file:
 PROJECT = README.strip('#').split('\n')[0].strip().split()[0].lower()
 DESCRIPTION = README.split('\n')[2]
 
-with open('%s/VERSION' % PROJECT, 'rb') as version_file:
+with open('%s/VERSION' % PROJECT) as version_file:
     VERSION = version_file.read().strip()
 
 
