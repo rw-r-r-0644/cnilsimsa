@@ -13,18 +13,16 @@
 #include <Python.h>
 
 
-unsigned char popcount[256];
-
-
-static void fillpopcount(void) {
-  int i, j;
-  memset(popcount, 0, sizeof(popcount));
-  for (i = 0; i < 256; i++) {
-    for (j = 0; j < 8; j++) {
-      popcount[i] += 1 & (i >> j);
-    }
-  }
-}
+static const unsigned char popcount[256] = {
+  0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+  1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+  1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+  2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+  1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+  2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+  2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+  3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8,
+};
 
 
 int native_compare_hexdigest(const char *a, const char *b) {
@@ -74,12 +72,11 @@ static PyModuleDef _nilsimsa_module = {
   PyModuleDef_HEAD_INIT,
   "_nilsimsa",
   "Python C nilsimsa extension module.",
-  -1,
+  0,
   _nilsimsa_funcs
 };
 
 
 PyMODINIT_FUNC PyInit__nilsimsa(void) {
-  fillpopcount();
   return PyModule_Create(&_nilsimsa_module);
 }
