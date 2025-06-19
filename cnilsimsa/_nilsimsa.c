@@ -9,6 +9,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 
@@ -26,7 +27,7 @@ static void fillpopcount(void) {
 }
 
 
-int native_compare_hexdigest(char *a, char *b) {
+int native_compare_hexdigest(const char *a, const char *b) {
   int i, ia, ib, bits = 0;
   char ha[3] = "  \0", hb[3] = "  \0";
   for (i = 0; i < 63; i += 2) {
@@ -41,8 +42,8 @@ int native_compare_hexdigest(char *a, char *b) {
 
 
 static PyObject * compare_hexdigests(PyObject * self, PyObject * args) {
-  char *a, *b;
-  int a_len, b_len;
+  const char *a, *b;
+  Py_ssize_t a_len, b_len;
   int i;
   if (!PyArg_ParseTuple(args, "s#s#", &a, &a_len, &b, &b_len)) {
     PyErr_SetString(PyExc_ValueError, "64 character hex digests required");
@@ -53,11 +54,11 @@ static PyObject * compare_hexdigests(PyObject * self, PyObject * args) {
     return NULL;
   }
   i = native_compare_hexdigest(a, b);
-  return Py_BuildValue("i", i);
+  return PyLong_FromLong(i);
 }
 
 
-static char _nilsimsa_docs[] =
+static const char _nilsimsa_docs[] =
   "compare_hexdigest(digest1, digest2): similarity score -128 to 128\n";
 
 
@@ -69,9 +70,16 @@ static PyMethodDef _nilsimsa_funcs[] = {
   {NULL}
 };
 
+static PyModuleDef _nilsimsa_module = {
+  PyModuleDef_HEAD_INIT,
+  "_nilsimsa",
+  "Python C nilsimsa extension module.",
+  -1,
+  _nilsimsa_funcs
+};
 
-void init_nilsimsa(void) {
+
+PyMODINIT_FUNC PyInit__nilsimsa(void) {
   fillpopcount();
-  Py_InitModule3("_nilsimsa", _nilsimsa_funcs,
-		 "Python C nilsimsa extension module.");
+  return PyModule_Create(&_nilsimsa_module);
 }
